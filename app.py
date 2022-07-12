@@ -1,12 +1,12 @@
 import io
-from distutils.log import debug
 from flask import Flask, render_template, make_response
 from flask import send_file, url_for, redirect
-from flask import request
+from flask import request, jsonify
 from models.model_handler import Model_Handler
 from PIL import Image
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "SECRETKEY"
 
 IMG = None
 data = {}
@@ -47,28 +47,35 @@ def recognize_motorcycle():
     pil_image = Image.open(file)
     IMG = pil_image.copy()
     output = model_handler.inference(pil_image)
+    output = ["{:.5f}".format(num) for num in output]
     data['output'] = output
-    # print(data['output'][0])
     data['classes'] = enumerate(model_handler.get_classes())
 
   except Exception as e:
-    response = make_response(e, 500)
+    response = make_response({'error': str(e)}, 417)
+    return response
 
   return redirect(url_for("index"))
   
-@app.route('/api/reconize_motorcycle', methods=['POST'])
-def recognize_motorcycle():
-  pass
-  # try:
-  #   file = request.files['filename']
-  #   pil_image = Image.open(file)
-  #   IMG = pil_image.copy()
-  #   output = model_handler.inference(pil_image)
-  #   data['output'] = output
-  #   # print(data['output'][0])
-  #   data['classes'] = enumerate(model_handler.get_classes())
-  # except Exception as e:
-  #   response = make_response(e, 500)
+@app.route('/api/reconize_motorcycle', methods=['GET', 'POST'])
+def api_recognize_motorcycle():
+  try:
+    file = request.files['file']
+    img = Image.open(file.stream)
+    output = model_handler.inference(img)
+    classes = model_handler.get_classes()
+    result = {}
+    
+    for (percent, cl) in zip(output, classes):
+      result[cl] = "{:.5f}".format(percent)
+
+    response_content = jsonify(result)
+    response = make_response(response_content, 200)
+    return response
+
+  except Exception as e:
+    response = make_response({'error': str(e)}, 417)
+    return response
 
 if __name__ == '__main__':
   app.run(debug=False)

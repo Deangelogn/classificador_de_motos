@@ -31,9 +31,7 @@ class Model_Handler():
     output = self.model(input_tensor)
     probs = self.sm(output)
     probs = probs.data.cpu().numpy()[0]
-    probs_round = [round(num, 5) for num in probs]
-
-    return probs_round
+    return probs
 
   def get_classes(self):
     return self.classes
