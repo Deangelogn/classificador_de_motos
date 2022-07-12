@@ -1,12 +1,12 @@
 import io
 from flask import Flask, render_template, make_response
-from flask import send_file, url_for, redirect
-from flask import request, jsonify
+from flask import send_file, url_for, redirect, request
 from models.model_handler import Model_Handler
 from PIL import Image
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "SECRETKEY"
+app.config['JSON_SORT_KEYS'] = False
 
 IMG = None
 data = {}
@@ -47,9 +47,10 @@ def recognize_motorcycle():
     pil_image = Image.open(file)
     IMG = pil_image.copy()
     output = model_handler.inference(pil_image)
-    output = ["{:.5f}".format(num) for num in output]
-    data['output'] = output
-    data['classes'] = enumerate(model_handler.get_classes())
+    classes = model_handler.get_classes()
+    result = sort_results(output, classes)
+    data['output'] = list(result.values())
+    data['classes'] = enumerate(result.keys())
 
   except Exception as e:
     response = make_response({'error': str(e)}, 417)
@@ -64,18 +65,24 @@ def api_recognize_motorcycle():
     img = Image.open(file.stream)
     output = model_handler.inference(img)
     classes = model_handler.get_classes()
-    result = {}
+    result = sort_results(output, classes)
     
-    for (percent, cl) in zip(output, classes):
-      result[cl] = "{:.5f}".format(percent)
-
-    response_content = jsonify(result)
-    response = make_response(response_content, 200)
+    response = make_response(result, 200)
     return response
 
   except Exception as e:
     response = make_response({'error': str(e)}, 417)
     return response
 
+def sort_results(probs, classes):
+  result = {}
+    
+  for (percent, cl) in zip(probs, classes):
+    result[cl] = "{:.5f}".format(percent)
+  
+  result = dict(sorted(result.items(), key=lambda item: float(item[1]), reverse=True))
+  return result
+
+
 if __name__ == '__main__':
-  app.run(debug=False)
+  app.run(debug=False, host='0.0.0.0', port='5000')

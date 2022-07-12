@@ -1,19 +1,16 @@
 
 import torch
 import json
-import numpy as np
-from PIL import Image
 from torch.autograd import Variable
 from torchvision import transforms
 
 
 class Model_Handler():
   def __init__(self, model=None):
-    np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
     self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
   
     if model == 'motorcycle':
-      self.model = torch.load('models/resnet18_pytorch.pth', map_location=self.device)
+      self.model = torch.load('models/pytorch_motorcycle.pth', map_location=self.device)
       self.transform = transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
