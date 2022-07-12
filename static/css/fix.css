@@ -1,0 +1,13 @@
+.minor-fixes {
+  width: -webkit-fill-available;
+  margin: 18px 0px;
+}
+
+
+.move-right{
+  float: right;
+}
+
+.move-left{
+  float: left;
+}
