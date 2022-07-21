@@ -1,7 +1,7 @@
 # classificador_de_motos
 API para classificar tipos de motos
 
-## Dependencias
+## Dependências
 * [Python 3.10](https://www.python.org/downloads/release/python-3100/)
 * [Flask 2.1](https://flask.palletsprojects.com/en/2.1.x/)
 * [Pytorch](https://pytorch.org/)
@@ -33,7 +33,7 @@ API para classificar tipos de motos
    
 ## Aplicação
 
-Para acessar a aplicação, acesse o url (localhost:5000)[localhost:5000]
+Para acessar a aplicação, acesse o url [localhost:5000](localhost:5000)
 
 Na aplicação você consegue fazer upload de images, que serão processadas pelo modelo identificador de motos. A probabilidade de cada classe é exibida de forma ranqueada (do maior para a menor), na interface.
 
