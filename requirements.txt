@@ -1,6 +1,6 @@
 beautifulsoup4==4.11.1
 cachelib==0.9.0
-certifi==2022.12.7
+certifi==2024.7.4
 charset-normalizer==2.1.0
 click==8.1.3
 filelock==3.7.1
