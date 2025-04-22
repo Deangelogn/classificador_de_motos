@@ -21,4 +21,4 @@ torchvision==0.13.0
 tqdm==4.66.3
 typing_extensions==4.3.0
 urllib3==1.26.19
-Werkzeug==3.0.3
+Werkzeug>=3.0.6
